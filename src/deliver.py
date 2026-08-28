@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 SCORED_PATH = DATA_DIR / "scored_notices.json"
 
-DEFAULT_THRESHOLD = int(os.environ.get("DIGEST_THRESHOLD", "50"))
+DEFAULT_THRESHOLD = int(os.environ.get("DIGEST_THRESHOLD") or "50")
 
 
 def _load_scored() -> list[dict]:
@@ -98,10 +98,10 @@ def send_email(notices: list[dict]) -> None:
         print("SMTP_HOST/DIGEST_EMAIL_TO ikke satt — hopper over e-post-levering.")
         return
 
-    port = int(os.environ.get("SMTP_PORT", "587"))
+    port = int(os.environ.get("SMTP_PORT") or "587")
     user = os.environ.get("SMTP_USER")
     password = os.environ.get("SMTP_PASS")
-    from_addr = os.environ.get("SMTP_FROM", user or "doffin-digest@localhost")
+    from_addr = os.environ.get("SMTP_FROM") or user or "doffin-digest@localhost"
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"Doffin-digest — {len(notices)} treff"
