@@ -46,7 +46,7 @@ DEFAULT_BASE_URL = "https://api.doffin.no/public/v2"
 DEFAULT_SEARCH_PATH = "/search"
 
 TIMEOUT_SECONDS = 30
-MAX_RETRIES = 3
+MAX_RETRIES = 4
 
 
 class DoffinClientError(RuntimeError):
@@ -59,7 +59,12 @@ def _get_with_retries(url: str, headers: dict, params: dict) -> dict:
         try:
             resp = requests.get(url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
             if resp.status_code == 429 and attempt < MAX_RETRIES:
-                time.sleep(2 ** attempt)
+                # Doffin rate-limits the ~36 back-to-back searches this pipeline makes
+                # (one per CPV code + one per buyer). Honor Retry-After if given, else
+                # back off well beyond a typical per-minute window.
+                retry_after = resp.headers.get("Retry-After")
+                wait = float(retry_after) if retry_after else 15 * attempt
+                time.sleep(wait)
                 continue
             resp.raise_for_status()
             return resp.json()

@@ -17,13 +17,14 @@ Feltnavnene i _parse_notice matcher det bekreftede skjemaet fra api.doffin.no/pu
 
 import argparse
 import json
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
 
 import yaml
 
-from src.doffin_client import DoffinClient
+from src.doffin_client import DoffinClient, DoffinClientError
 from src.models import Notice
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -34,6 +35,7 @@ SEEN_PATH = DATA_DIR / "seen_notices.json"
 NEW_NOTICES_PATH = DATA_DIR / "new_notices.json"
 
 MAX_PAGES = 10  # sikkerhetstak — 24-timers-vinduet bør aldri nærme seg 10*100 treff
+REQUEST_SPACING_SECONDS = 1.0  # ~36 søk (CPV + buyers) rett etter hverandre trigger 429 hos Doffin uten dette
 
 
 def _search_all_pages(client: DoffinClient, **search_kwargs: Any) -> list[dict]:
@@ -102,7 +104,13 @@ def fetch_new_notices(since_hours: int = 24) -> list[Notice]:
 
     for entry in cpv_config:
         code = entry["code"]
-        hits = _search_all_pages(client, cpv_codes=[code], issue_date_from=issue_date_from)
+        try:
+            hits = _search_all_pages(client, cpv_codes=[code], issue_date_from=issue_date_from)
+        except DoffinClientError as exc:
+            print(f"ADVARSEL: søk på CPV {code} feilet, hopper over: {exc}")
+            continue
+        finally:
+            time.sleep(REQUEST_SPACING_SECONDS)
         raw_dump.append({"pass": "cpv", "cpv_code": code, "hits": hits})
         for item in hits:
             notice = _parse_notice(item, matched_via=f"cpv:{code}")
@@ -111,7 +119,13 @@ def fetch_new_notices(since_hours: int = 24) -> list[Notice]:
 
     all_buyer_names = [name for group in buyers_config.values() for name in group]
     for buyer_name in all_buyer_names:
-        hits = _search_all_pages(client, search_string=buyer_name, issue_date_from=issue_date_from)
+        try:
+            hits = _search_all_pages(client, search_string=buyer_name, issue_date_from=issue_date_from)
+        except DoffinClientError as exc:
+            print(f"ADVARSEL: søk på oppdragsgiver '{buyer_name}' feilet, hopper over: {exc}")
+            continue
+        finally:
+            time.sleep(REQUEST_SPACING_SECONDS)
         raw_dump.append({"pass": "buyer", "buyer": buyer_name, "hits": hits})
         for item in hits:
             notice = _parse_notice(item, matched_via=f"buyer:{buyer_name}")
