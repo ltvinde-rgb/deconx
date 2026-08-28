@@ -1,0 +1,34 @@
+# CPV-koder som trigger henting fra Doffin.
+# "weight" er kun til bruk i scoring-prompten som et hint om hvor sentral koden er
+# for Decon-X — selve relevansvurderingen gjøres alltid av Claude på tekstinnholdet,
+# ikke av vekten alene. Norske underterskel-kunngjøringer tagger ofte CPV feil eller
+# ufullstendig, derfor finnes buyers.yaml som et andre, CPV-uavhengig spor.
+
+- code: "33191000"
+  label: "Sterilisering, desinfeksjon og hygieneutstyr"
+  weight: primary
+  note: "Hovedtreff for Decon-X — direkte i kjerneproduktkategorien."
+
+- code: "33191100"
+  label: "Sterilisator"
+  weight: primary
+  note: "Direkte overlapp med DX1/DX3-maskinvare."
+
+- code: "39330000"
+  label: "Desinfeksjonsutstyr"
+  weight: primary
+
+- code: "24455000"
+  label: "Desinfeksjonsmiddel"
+  weight: secondary
+  note: "H2O2-forbruksvarer følger maskinparken — relevant for etterfylling/serviceavtaler, ikke bare nysalg."
+
+- code: "90921000"
+  label: "Desinfeksjons- og skadedyrbekjempelsestjenester"
+  weight: secondary
+  note: "Fanger opp tjenestekjøp der Decon-X kan by som underleverandør, ikke nødvendigvis direkte maskinsalg."
+
+- code: "33100000"
+  label: "Medisinsk utstyr"
+  weight: noisy
+  note: "Bredt støy-nivå. Brukes bare som ekstra kontekst inn i den semantiske vurderingen — forvent lav treffrate og at Claude skal bomme mye ned her."

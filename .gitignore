@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+data/raw/
+data/new_notices.json
+data/scored_notices.json
+data/calibration/

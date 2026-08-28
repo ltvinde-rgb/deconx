@@ -1,0 +1,53 @@
+name: Doffin daily scan
+
+on:
+  schedule:
+    # 06:00 Europe/Oslo. Oslo er UTC+1 (vinter) / UTC+2 (sommer) — 05:00 UTC gir 06:00
+    # vintertid og 07:00 sommertid. Juster om du vil ha eksakt klokketid året rundt.
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch new notices
+        env:
+          DOFFIN_SUBSCRIPTION_KEY: ${{ secrets.DOFFIN_SUBSCRIPTION_KEY }}
+        run: python -m src.fetch_doffin --since-hours 24
+
+      - name: Score notices
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m src.score_notices
+
+      - name: Deliver digest
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          DIGEST_EMAIL_TO: ${{ secrets.DIGEST_EMAIL_TO }}
+          DIGEST_THRESHOLD: ${{ vars.DIGEST_THRESHOLD }}
+        run: python -m src.deliver
+
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/seen_notices.json
+          git diff --staged --quiet || git commit -m "Update seen_notices.json [skip ci]"
+          git push

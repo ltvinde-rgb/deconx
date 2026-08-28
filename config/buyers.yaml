@@ -1,0 +1,43 @@
+# Navngitte oppdragsgivere som overvåkes UAVHENGIG av CPV-kode.
+# Norske underterskel-kunngjøringer er ofte slurvete tagget på CPV, så dette sporet
+# fanger opp alt fra disse oppdragsgiverne uansett kode, og lar Claude i scoring-laget
+# vurdere relevans fra tittel/beskrivelse alene.
+#
+# Dette er en startliste, ikke en fasit — presis matching mot Doffins "noticeAuthor"-felt
+# avhenger av hvordan hver oppdragsgiver er registrert der (org.nr / navnevariant), som vi
+# først kan bekrefte når vi har et ekte API-nøkkel og ser faktiske feltverdier. Fram til da
+# brukes listen til klient-side substreng-matching på oppdragsgivernavn i rå-responsen.
+# FYLL INN / RETT: fjern eller legg til navn etter hva som faktisk er relevant for dere.
+
+helse:
+  - "Sykehusinnkjøp HF"          # kjører rammeavtaler på tvers av alle helseforetak — sannsynligvis viktigste enkelt-oppdragsgiver
+  - "Oslo universitetssykehus"
+  - "Akershus universitetssykehus"
+  - "Helse Bergen"
+  - "Helse Stavanger"
+  - "St. Olavs hospital"
+  - "Universitetssykehuset Nord-Norge"
+  - "Sykehuset Innlandet"
+  - "Vestre Viken"
+  - "Sørlandet sykehus"
+
+storkommuner:
+  - "Oslo kommune"
+  - "Bergen kommune"
+  - "Trondheim kommune"
+  - "Stavanger kommune"
+  - "Bærum kommune"
+  - "Kristiansand kommune"
+  - "Fredrikstad kommune"
+  - "Drammen kommune"
+  - "Tromsø kommune"
+
+dyrehelse_mat:
+  - "Mattilsynet"
+  - "Nortura"
+  - "Tine"
+  - "Mowi"
+  - "Lerøy Seafood"
+  - "Cermaq"
+  - "Animalia"
+  - "Norsvin"
