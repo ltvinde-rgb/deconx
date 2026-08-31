@@ -28,10 +28,13 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Fetch new notices
+      - name: Fetch new Doffin notices
         env:
           DOFFIN_SUBSCRIPTION_KEY: ${{ secrets.DOFFIN_SUBSCRIPTION_KEY }}
         run: python -m src.fetch_doffin --since-hours 24
+
+      - name: Fetch new TED notices (EU-wide, no key needed)
+        run: python -m src.fetch_ted --since-days 1
 
       - name: Score notices
         env:

@@ -65,9 +65,9 @@ def _build_user_prompt(notice: dict) -> str:
         f"Tittel: {notice.get('title', '')}\n"
         f"Oppdragsgiver: {notice.get('buyer_name', '')}\n"
         f"CPV-koder: {', '.join(notice.get('cpv_codes', []))}\n"
-        f"Frist: {notice.get('deadline', 'ukjent')}\n"
+        f"Frist: {notice.get('deadline') or 'ukjent'}\n"
         f"Funnet via: {notice.get('matched_via', '')}\n\n"
-        f"Beskrivelse:\n{notice.get('description', '(ingen beskrivelse)')}\n\n"
+        f"Beskrivelse:\n{notice.get('description') or '(ingen beskrivelse)'}\n\n"
         "Vurder relevansen for Decon-X og kall submit_assessment."
     )
 

@@ -66,17 +66,21 @@ def _filter_and_sort(notices: list[dict], threshold: int) -> list[dict]:
     return sorted(above, key=lambda n: n["assessment"]["score"], reverse=True)
 
 
+def _source_label(notice: dict) -> str:
+    return (notice.get("matched_via") or "").split(":")[0].upper() or "?"
+
+
 def _format_slack_blocks(notices: list[dict]) -> dict:
     if not notices:
-        return {"text": "Ingen Doffin-kunngjøringer over terskelen denne uken."}
+        return {"text": "Ingen kunngjøringer over terskelen denne uken."}
 
-    blocks = [{"type": "header", "text": {"type": "plain_text", "text": f"Doffin-ukesoppsummering — {len(notices)} treff"}}]
+    blocks = [{"type": "header", "text": {"type": "plain_text", "text": f"Ukesoppsummering — {len(notices)} treff"}}]
     for n in notices:
         a = n["assessment"]
         link = n.get("url") or "(ingen lenke funnet)"
         text = (
-            f"*{n['title']}*  —  score {a['score']} · {a['segment']} · {a['flag']}\n"
-            f"Oppdragsgiver: {n['buyer_name']} · Frist: {n.get('deadline', 'ukjent')}\n"
+            f"*{n['title']}*  —  score {a['score']} · {a['segment']} · {a['flag']} · kilde: {_source_label(n)}\n"
+            f"Oppdragsgiver: {n['buyer_name']} · Frist: {n.get('deadline') or 'ukjent'}\n"
             f"{link}\n"
             f"_{a['reasoning']}_"
         )
@@ -87,7 +91,7 @@ def _format_slack_blocks(notices: list[dict]) -> dict:
 
 def _format_email_html(notices: list[dict]) -> str:
     if not notices:
-        return "<p>Ingen Doffin-kunngjøringer over terskelen denne uken.</p>"
+        return "<p>Ingen kunngjøringer over terskelen denne uken.</p>"
 
     rows = ""
     for n in notices:
@@ -98,15 +102,16 @@ def _format_email_html(notices: list[dict]) -> str:
             f"<td>{a['score']}</td>"
             f"<td>{a['segment']}</td>"
             f"<td>{a['flag']}</td>"
+            f"<td>{_source_label(n)}</td>"
             f"<td><a href='{link}'>{n['title']}</a></td>"
             f"<td>{n['buyer_name']}</td>"
-            f"<td>{n.get('deadline', 'ukjent')}</td>"
+            f"<td>{n.get('deadline') or 'ukjent'}</td>"
             f"<td>{a['reasoning']}</td>"
             "</tr>"
         )
     return (
         "<table border='1' cellpadding='6' cellspacing='0'>"
-        "<tr><th>Score</th><th>Segment</th><th>Flagg</th><th>Tittel</th>"
+        "<tr><th>Score</th><th>Segment</th><th>Flagg</th><th>Kilde</th><th>Tittel</th>"
         "<th>Oppdragsgiver</th><th>Frist</th><th>Begrunnelse</th></tr>"
         f"{rows}</table>"
     )
@@ -136,7 +141,7 @@ def send_email(notices: list[dict]) -> None:
     from_addr = os.environ.get("SMTP_FROM") or user or "doffin-digest@localhost"
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Doffin-ukesoppsummering — {len(notices)} treff"
+    msg["Subject"] = f"Ukesoppsummering (Doffin + TED) — {len(notices)} treff"
     msg["From"] = from_addr
     msg["To"] = to_addr
     msg.attach(MIMEText(_format_email_html(notices), "html", "utf-8"))

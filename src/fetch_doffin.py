@@ -113,7 +113,7 @@ def fetch_new_notices(since_hours: int = 24) -> list[Notice]:
             time.sleep(REQUEST_SPACING_SECONDS)
         raw_dump.append({"pass": "cpv", "cpv_code": code, "hits": hits})
         for item in hits:
-            notice = _parse_notice(item, matched_via=f"cpv:{code}")
+            notice = _parse_notice(item, matched_via=f"doffin:cpv:{code}")
             if notice and notice.notice_id not in by_id:
                 by_id[notice.notice_id] = notice
 
@@ -128,7 +128,7 @@ def fetch_new_notices(since_hours: int = 24) -> list[Notice]:
             time.sleep(REQUEST_SPACING_SECONDS)
         raw_dump.append({"pass": "buyer", "buyer": buyer_name, "hits": hits})
         for item in hits:
-            notice = _parse_notice(item, matched_via=f"buyer:{buyer_name}")
+            notice = _parse_notice(item, matched_via=f"doffin:buyer:{buyer_name}")
             if notice and notice.notice_id not in by_id:
                 by_id[notice.notice_id] = notice
 

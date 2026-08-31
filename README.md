@@ -1,8 +1,9 @@
 # Doffin-overvåking for Decon-X
 
-Automatisert jobb: **hent** nye Doffin-kunngjøringer daglig → **vurder** relevans med
-Claude → **lever** én samlet oppsummering på Slack (og e-post) én gang i uken. Ingen
-UI, ingen server — kjøres som en cron-styrt GitHub Action.
+Automatisert jobb: **hent** nye kunngjøringer daglig fra Doffin (Norge) og TED
+(hele EU/EØS over EU-terskel) → **vurder** relevans med Claude → **lever** én samlet
+oppsummering på Slack (og e-post) én gang i uken. Ingen UI, ingen server — kjøres som
+en cron-styrt GitHub Action.
 
 Se [`config/relevance_profile.md`](config/relevance_profile.md) for hva som faktisk
 avgjør om dette blir bra — den må fylles ut med ekte produkt-/pris-/bomtreff-detaljer
@@ -36,6 +37,24 @@ Nøkkelen fra **"Public API"**-subscriptionen din (profil → Subscriptions på
 python -m src.doffin_client
 ```
 for en rask, levende sjekk av at kontrakten fortsatt stemmer.
+
+### TED (EU/EØS-dekkende) — ingen nøkkel nødvendig ✅
+
+[`src/ted_client.py`](src/ted_client.py) kaller `api.ted.europa.eu/v3/notices/search`
+direkte, uten autentisering — bekreftet med ekte, levende kall 2026-08-31 (se
+modulens docstring for query-syntaks og responsskjema). `src/fetch_ted.py` kjører ett
+CPV-søk over hele EU/EØS og slår resultatet sammen med det Doffin allerede fant samme
+kjøring.
+
+To ting å vite:
+- Den brede/støyete CPV-koden (33100000) er **bevisst utelatt** fra TED-søket —
+  EU-dekkende volum på en så bred kode ville gitt mye høyere Claude-kostnad per dag
+  enn Norge-alene-volumet fra Doffin. Se `_load_cpv_codes()` i `fetch_ted.py` om du
+  vil ha den med likevel.
+- Norske kunngjøringer over EØS-terskel havner uansett også i Doffin, så du vil av og
+  til se samme reelle anskaffelse to ganger i digesten — én gang med `kilde: DOFFIN`,
+  én gang med `kilde: TED` — siden notice-ID-ene er ulike på tvers av kildene og ikke
+  kan deduperes automatisk uten videre arbeid.
 
 ### 2. Anthropic API-nøkkel
 
@@ -77,6 +96,7 @@ pip install -r requirements.txt
 cp .env.example .env   # fyll inn nøklene dine, .env commites aldri
 
 python -m src.fetch_doffin --since-hours 24     # se data/raw/{dato}.json og data/new_notices.json
+python -m src.fetch_ted --since-days 1          # legger TED-treff til i samme new_notices.json
 python -m src.score_notices                     # se data/scored_notices.json
 python -m src.deliver --dry-run                 # printer digest uten å sende noe
 python -m src.deliver                            # sender faktisk til Slack/e-post
@@ -113,12 +133,11 @@ så langt, uten å vente til fredag.
 
 ## Fase 2 (ikke bygget ennå)
 
-- **TED-utvidelse**: TED har et gratis, dokumentert søke-API uten nøkkel
-  (`search-api.ted.europa.eu`, v3) — samme CPV-/oppdragsgiver-filtre og samme
-  scoring-lag, egen `fetch_ted.py`. Relevant når DX3/Nofima-samarbeidet skal utenfor
-  Norge, siden EØS-terskel-kunngjøringer fra Norge uansett går til TED.
-- **Tildelings-tracking**: Det bekreftede API-skjemaet har faktisk `lots[].winner`
-  rett i søkeresponsen (se `raw`-feltet på hver `Notice`) — filtrer på `status` for
-  tildelte kunngjøringer og du har vinner-navn uten noe ekstra scraping. Å matche disse
-  mot profilen gir automatisk konkurrentovervåking — hvem vant konkurransene du aldri
-  så.
+- **Tildelings-tracking**: Både Doffin (`lots[].winner`) og TED (`winner-name`,
+  `notice-type=can-standard`) har faktisk vinner-data rett i søkeresponsen (se
+  `raw`-feltet på hver `Notice`) — filtrer på status/type for tildelte kunngjøringer og
+  du har vinner-navn uten noe ekstra scraping. Å matche disse mot profilen gir
+  automatisk konkurrentovervåking — hvem vant konkurransene du aldri så.
+- **Kryssdeduplisering Doffin/TED**: samme norske anskaffelse over EØS-terskel dukker
+  opp i begge kilder med ulik ID — å matche dem (på f.eks. tittel + oppdragsgiver +
+  dato) ville fjernet dobbeltoppføringer i digesten.
