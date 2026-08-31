@@ -1,8 +1,8 @@
 # Doffin-overvåking for Decon-X
 
-Daglig, automatisert jobb: **hent** nye Doffin-kunngjøringer → **vurder** relevans med
-Claude → **lever** en digest på Slack og e-post. Ingen UI, ingen server — kjøres som en
-cron-styrt GitHub Action.
+Automatisert jobb: **hent** nye Doffin-kunngjøringer daglig → **vurder** relevans med
+Claude → **lever** én samlet oppsummering på Slack (og e-post) én gang i uken. Ingen
+UI, ingen server — kjøres som en cron-styrt GitHub Action.
 
 Se [`config/relevance_profile.md`](config/relevance_profile.md) for hva som faktisk
 avgjør om dette blir bra — den må fylles ut med ekte produkt-/pris-/bomtreff-detaljer
@@ -99,9 +99,17 @@ Laster ned DFØs årlige CSV-dumper, kjører samme scoring offline, og skriver
 ## GitHub Action
 
 [`.github/workflows/daily-scan.yml`](.github/workflows/daily-scan.yml) kjører fetch →
-score → deliver hver dag kl. 05:00 UTC (juster cron for norsk sommertid om du vil ha
-eksakt lokal klokketid), og committer `data/seen_notices.json` tilbake til repoet som
-dedup-state. Kan også trigges manuelt fra **Actions**-fanen (`workflow_dispatch`).
+score → deliver hver dag kl. 15:00 Europe/Oslo (`0 13 * * *` UTC — kalibrert for
+sommertid/CEST, juster til `0 14 * * *` når Norge går over til vintertid i slutten av
+oktober). Fetch og score kjører daglig som før; **deliver** akkumulerer dagens treff i
+`data/weekly_accumulator.json` (committes tilbake til repoet, samme mønster som
+`data/seen_notices.json`), og sender først den samlede ukesoppsummeringen til Slack/
+e-post på ukedagen satt i repo-**variabelen** `WEEKLY_DIGEST_DAY` (ISO-ukedag, 1=mandag
+... 7=søndag — default 5=fredag hvis ikke satt).
+
+Trigges også manuelt fra **Actions**-fanen (`workflow_dispatch`) — kryss av
+**"Send ukesdigest nå"** der for å teste selve utsendingen med det som er akkumulert
+så langt, uten å vente til fredag.
 
 ## Fase 2 (ikke bygget ennå)
 

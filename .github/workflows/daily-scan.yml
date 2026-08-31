@@ -2,10 +2,16 @@ name: Doffin daily scan
 
 on:
   schedule:
-    # 06:00 Europe/Oslo. Oslo er UTC+1 (vinter) / UTC+2 (sommer) — 05:00 UTC gir 06:00
-    # vintertid og 07:00 sommertid. Juster om du vil ha eksakt klokketid året rundt.
-    - cron: "0 5 * * *"
-  workflow_dispatch: {}
+    # 15:00 Europe/Oslo. Oslo er UTC+1 (vinter) / UTC+2 (sommer) — 13:00 UTC gir 15:00
+    # sommertid (CEST) og 14:00 vintertid (CET). Juster til "0 14 * * *" når Norge
+    # går over til vintertid i slutten av oktober, om du vil ha eksakt klokketid.
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      force_send:
+        description: "Send ukesdigest nå, uansett ukedag (for testing)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -32,7 +38,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m src.score_notices
 
-      - name: Deliver digest
+      - name: Deliver digest (accumulates daily, sends weekly)
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -42,12 +48,13 @@ jobs:
           SMTP_FROM: ${{ secrets.SMTP_FROM }}
           DIGEST_EMAIL_TO: ${{ secrets.DIGEST_EMAIL_TO }}
           DIGEST_THRESHOLD: ${{ vars.DIGEST_THRESHOLD }}
-        run: python -m src.deliver
+          WEEKLY_DIGEST_DAY: ${{ vars.WEEKLY_DIGEST_DAY }}
+        run: python -m src.deliver ${{ (inputs.force_send && '--force-send') || '' }}
 
       - name: Commit updated state
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/seen_notices.json
-          git diff --staged --quiet || git commit -m "Update seen_notices.json [skip ci]"
+          git add data/seen_notices.json data/weekly_accumulator.json
+          git diff --staged --quiet || git commit -m "Update seen_notices.json / weekly_accumulator.json [skip ci]"
           git push
