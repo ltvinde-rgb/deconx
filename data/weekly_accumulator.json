@@ -1,1 +1,144 @@
-[]
+[
+  {
+    "notice_id": "2026-113979",
+    "title": "Reparasjon av gulv/arealer epoxy",
+    "description": "Vann- og avløpsetaten (VAV) har til hensikt å inngå en rammeavtale for legging av nytt epoxy-belegg, reparasjon av eksisterende gulv, sliping, akryl og reprasjon av epoxy på etatens industrianlegg. Per nå eksisterer ikke en slik avtale for etaten.\n\nRammeavtalen omfatter hovedsakelig arbeid på anlegget på Bekkelaget renseanlegg, men vil også anvendes for anleggene på Skullerud, Oset og resten av etatens anlegg. Det vil også være en mulighet for at det nye anlegget på Huseby vil kunne benytte avtalen.\n\nFor en mer utfyllende oversikt over rammeavtalens innhold se vedlegg 1 – kravspesifikasjon.  \n\nDen øvre økonomiske rammen for rammeavtalen er NOK 9 600 000 ekskl. mva.\n\nEU-domstolen har i sak C-23/20 uttalt at oppdragsgiver ved rammeavtaler må angi en anslått mengde og/eller verdi samt en maksimal mengde og/eller verdi for uttak fra rammeavtalen. Når maksgrensen er nådd er utgangspunktet at rammeavtalen har uttømt sin virkning.",
+    "buyer_name": "Oslo kommune v/ Vann- og avløpsetaten",
+    "cpv_codes": [
+      "45400000",
+      "45440000",
+      "45430000",
+      "45442000",
+      "45000000"
+    ],
+    "published_date": "2026-09-05",
+    "deadline": "2026-10-16T10:00:00Z",
+    "url": "https://doffin.no/notices/2026-113979",
+    "matched_via": "doffin:buyer:Oslo kommune",
+    "raw": {
+      "id": "2026-113979",
+      "buyer": [
+        {
+          "id": "e961fbee6b521f955732c683914890e9",
+          "organizationId": "971185589",
+          "name": "Oslo kommune v/ Vann- og avløpsetaten"
+        }
+      ],
+      "heading": "Reparasjon av gulv/arealer epoxy",
+      "description": "Vann- og avløpsetaten (VAV) har til hensikt å inngå en rammeavtale for legging av nytt epoxy-belegg, reparasjon av eksisterende gulv, sliping, akryl og reprasjon av epoxy på etatens industrianlegg. Per nå eksisterer ikke en slik avtale for etaten.\n\nRammeavtalen omfatter hovedsakelig arbeid på anlegget på Bekkelaget renseanlegg, men vil også anvendes for anleggene på Skullerud, Oset og resten av etatens anlegg. Det vil også være en mulighet for at det nye anlegget på Huseby vil kunne benytte avtalen.\n\nFor en mer utfyllende oversikt over rammeavtalens innhold se vedlegg 1 – kravspesifikasjon.  \n\nDen øvre økonomiske rammen for rammeavtalen er NOK 9 600 000 ekskl. mva.\n\nEU-domstolen har i sak C-23/20 uttalt at oppdragsgiver ved rammeavtaler må angi en anslått mengde og/eller verdi samt en maksimal mengde og/eller verdi for uttak fra rammeavtalen. Når maksgrensen er nådd er utgangspunktet at rammeavtalen har uttømt sin virkning.",
+      "locationId": [
+        "NO081"
+      ],
+      "estimatedValue": {
+        "currencyCode": "NOK",
+        "amount": 9600000.0
+      },
+      "type": "ANNOUNCEMENT_OF_COMPETITION",
+      "allTypes": [
+        "ANNOUNCEMENT_OF_COMPETITION",
+        "COMPETITION",
+        "NOTICE_ON_BUYER_PROFILE",
+        "PLANNING"
+      ],
+      "status": null,
+      "issueDate": "2026-09-04T10:14:00Z",
+      "deadline": "2026-10-16T10:00:00Z",
+      "publicationDate": "2026-09-05",
+      "receivedTenders": null,
+      "allReceivedTenders": null,
+      "cpvCodes": [
+        "45400000",
+        "45440000",
+        "45430000",
+        "45442000",
+        "45000000"
+      ],
+      "limitedDataFlag": null,
+      "doffinClassicUrl": null,
+      "lots": [
+        {
+          "heading": "Reparasjon av gulv/arealer epoxy",
+          "description": "Vann- og avløpsetaten (VAV) har til hensikt å inngå en rammeavtale for legging av nytt epoxy-belegg, reparasjon av eksisterende gulv, sliping, akryl og reprasjon av epoxy på etatens industrianlegg. Per nå eksisterer ikke en slik avtale for etaten.\n\nRammeavtalen omfatter hovedsakelig arbeid på anlegget på Bekkelaget renseanlegg, men vil også anvendes for anleggene på Skullerud, Oset og resten av etatens anlegg. Det vil også være en mulighet for at det nye anlegget på Huseby vil kunne benytte avtalen.\n\nFor en mer utfyllende oversikt over rammeavtalens innhold se vedlegg 1 – kravspesifikasjon.  \n\nDen øvre økonomiske rammen for rammeavtalen er NOK 9 600 000 ekskl. mva.\n\nEU-domstolen har i sak C-23/20 uttalt at oppdragsgiver ved rammeavtaler må angi en anslått mengde og/eller verdi samt en maksimal mengde og/eller verdi for uttak fra rammeavtalen. Når maksgrensen er nådd er utgangspunktet at rammeavtalen har uttømt sin virkning.",
+          "winner": []
+        }
+      ]
+    },
+    "assessment": {
+      "score": 2,
+      "segment": "none",
+      "flag": "none",
+      "reasoning": "Dette gjelder bygningsmessig arbeid (epoxy-gulv, sliping, reparasjon) på renseanlegg/industrianlegg — et rent bygg-/vedlikeholdsanbud (CPV 45xxx-serien for byggearbeid), ikke maskinbasert romdekontaminering eller H2O2-utstyr. Ingen kobling til Decon-X sitt produktspekter (DX1/DX3/forbruksvarer). Vann- og avløpsetaten er heller ikke et helse-, dyrehelse- eller matsegment-kjøp i relevant forstand her, og CPV-treffet er kun tilfeldig overlapp på \"anlegg\", ikke desinfeksjon."
+    }
+  },
+  {
+    "notice_id": "2026-113990",
+    "title": "Ferske konditorvarer",
+    "description": "Oppdragsgiver inviterer med dette til konkurranse for inngåelse av rammeavtale for kjøp av ferske konditorvarer (ferske kaker)Rammeavtalens varighet vil være 2 år med opsjon for oppdragsgiver å forlenge avtalen med 1+1 år. Det skal inngås avtale med en leverandør.Kontrakten er reservert for virksomheter med funksjonshemmede eller vanskeligstilte personer jf. FOA § 8-8.Fullstendig beskrivelse av leveransen følger av vedleggene til konkurransegrunnlaget.",
+    "buyer_name": "Fredrikstad kommune, Hvaler kommune",
+    "cpv_codes": [
+      "15812200",
+      "15810000",
+      "15800000",
+      "15000000",
+      "15812000"
+    ],
+    "published_date": "2026-09-05",
+    "deadline": "2026-10-06T10:00:00Z",
+    "url": "https://doffin.no/notices/2026-113990",
+    "matched_via": "doffin:buyer:Fredrikstad kommune",
+    "raw": {
+      "id": "2026-113990",
+      "buyer": [
+        {
+          "id": "cfac6ce849b2a755e66f10dc3a8e3d07",
+          "organizationId": "940039541",
+          "name": "Fredrikstad kommune"
+        },
+        {
+          "id": "abd1f58a7fac9f5d1f208c1057fe328b",
+          "organizationId": "964947082",
+          "name": "Hvaler kommune"
+        }
+      ],
+      "heading": "Ferske konditorvarer",
+      "description": "Oppdragsgiver inviterer med dette til konkurranse for inngåelse av rammeavtale for kjøp av ferske konditorvarer (ferske kaker)Rammeavtalens varighet vil være 2 år med opsjon for oppdragsgiver å forlenge avtalen med 1+1 år. Det skal inngås avtale med en leverandør.Kontrakten er reservert for virksomheter med funksjonshemmede eller vanskeligstilte personer jf. FOA § 8-8.Fullstendig beskrivelse av leveransen følger av vedleggene til konkurransegrunnlaget.",
+      "locationId": [
+        "NO083"
+      ],
+      "estimatedValue": null,
+      "type": "ANNOUNCEMENT_OF_COMPETITION",
+      "allTypes": [
+        "ANNOUNCEMENT_OF_COMPETITION",
+        "COMPETITION"
+      ],
+      "status": "ACTIVE",
+      "issueDate": "2026-09-04T13:24:48Z",
+      "deadline": "2026-10-06T10:00:00Z",
+      "publicationDate": "2026-09-05",
+      "receivedTenders": null,
+      "allReceivedTenders": null,
+      "cpvCodes": [
+        "15812200",
+        "15810000",
+        "15800000",
+        "15000000",
+        "15812000"
+      ],
+      "limitedDataFlag": null,
+      "doffinClassicUrl": null,
+      "lots": [
+        {
+          "heading": "Ferske konditorvarer",
+          "description": "Oppdragsgiver inviterer med dette til konkurranse for inngåelse av rammeavtale for kjøp av ferske konditorvarer (ferske kaker)Rammeavtalens varighet vil være 2 år med opsjon for oppdragsgiver å forlenge avtalen med 1+1 år. Det skal inngås avtale med en leverandør.Kontrakten er reservert for virksomheter med funksjonshemmede eller vanskeligstilte personer jf. FOA § 8-8.Fullstendig beskrivelse av leveransen følger av vedleggene til konkurransegrunnlaget.",
+          "winner": []
+        }
+      ]
+    },
+    "assessment": {
+      "score": 0,
+      "segment": "none",
+      "flag": "none",
+      "reasoning": "Dette er en anskaffelse av ferske konditorvarer (kaker) til kommuner, reservert for virksomheter med funksjonshemmede/vanskeligstilte jf. FOA §8-8. Ingen tilknytning til romdekontaminering, H2O2-utstyr eller biosikkerhet - CPV-kodene gjelder matvarer (konditori), ikke desinfeksjon eller hygieneutstyr. Fullstendig irrelevant for Decon-X sitt produktspekter."
+    }
+  }
+]
