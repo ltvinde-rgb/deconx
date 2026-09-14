@@ -1,9 +1,11 @@
 # Doffin-overvåking for Decon-X
 
-Automatisert jobb: **hent** nye kunngjøringer daglig fra Doffin (Norge) og TED
-(hele EU/EØS over EU-terskel) → **vurder** relevans med Claude → **lever** én samlet
-oppsummering på Slack (og e-post) én gang i uken. Ingen UI, ingen server — kjøres som
-en cron-styrt GitHub Action.
+Automatisert jobb, kjørt én gang i uken: **hent** nye kunngjøringer siste 7 dager fra
+Doffin (Norge) og TED (hele EU/EØS over EU-terskel) → **vurder** relevans med Claude →
+**lever** én samlet oppsummering på Slack (og e-post). Ingen UI, ingen server — kjøres
+som en cron-styrt GitHub Action. (Kjørte tidligere daglig med separat ukentlig
+levering — lagt om til rent ukentlig for å holde Anthropic-kredittforbruket
+forutsigbart, se `data/weekly_accumulator.json`s rolle under.)
 
 Se [`config/relevance_profile.md`](config/relevance_profile.md) for hva som faktisk
 avgjør om dette blir bra — den må fylles ut med ekte produkt-/pris-/bomtreff-detaljer
@@ -95,8 +97,8 @@ python -m venv .venv && source .venv/bin/activate   # eller .venv\Scripts\activa
 pip install -r requirements.txt
 cp .env.example .env   # fyll inn nøklene dine, .env commites aldri
 
-python -m src.fetch_doffin --since-hours 24     # se data/raw/{dato}.json og data/new_notices.json
-python -m src.fetch_ted --since-days 1          # legger TED-treff til i samme new_notices.json
+python -m src.fetch_doffin --since-hours 168    # 7 dager, se data/raw/{dato}.json og data/new_notices.json
+python -m src.fetch_ted --since-days 7           # legger TED-treff til i samme new_notices.json
 python -m src.score_notices                     # se data/scored_notices.json
 python -m src.deliver --dry-run                 # printer digest uten å sende noe
 python -m src.deliver                            # sender faktisk til Slack/e-post
@@ -118,18 +120,20 @@ Laster ned DFØs årlige CSV-dumper, kjører samme scoring offline, og skriver
 
 ## GitHub Action
 
-[`.github/workflows/daily-scan.yml`](.github/workflows/daily-scan.yml) kjører fetch →
-score → deliver hver dag kl. 15:00 Europe/Oslo (`0 13 * * *` UTC — kalibrert for
-sommertid/CEST, juster til `0 14 * * *` når Norge går over til vintertid i slutten av
-oktober). Fetch og score kjører daglig som før; **deliver** akkumulerer dagens treff i
-`data/weekly_accumulator.json` (committes tilbake til repoet, samme mønster som
-`data/seen_notices.json`), og sender først den samlede ukesoppsummeringen til Slack/
-e-post på ukedagen satt i repo-**variabelen** `WEEKLY_DIGEST_DAY` (ISO-ukedag, 1=mandag
-... 7=søndag — default 5=fredag hvis ikke satt).
+[`.github/workflows/daily-scan.yml`](.github/workflows/daily-scan.yml) kjører
+fetch → score → deliver én gang i uken, fredager kl. 15:00 Europe/Oslo
+(`0 13 * * 5` UTC — kalibrert for sommertid/CEST, juster til `0 14 * * 5` når Norge
+går over til vintertid i slutten av oktober). Fetch-vinduet er 7 dager
+(`--since-hours 168` / `--since-days 7`) for å dekke hele perioden siden forrige kjøring.
+
+Ukedagen i cron-uttrykket (5 = fredag) må holdes i sync med repo-**variabelen**
+`WEEKLY_DIGEST_DAY` som `deliver.py` leser (ISO-ukedag, 1=mandag...7=søndag, default
+5=fredag) — de to var opprinnelig laget for et daglig-fetch/ukentlig-send-oppsett og
+brukes nå begge til samme fredag, men `deliver.py` sin logikk (akkumuler → send kun på
+riktig ukedag) er beholdt uendret, så den fungerer likt uansett.
 
 Trigges også manuelt fra **Actions**-fanen (`workflow_dispatch`) — kryss av
-**"Send ukesdigest nå"** der for å teste selve utsendingen med det som er akkumulert
-så langt, uten å vente til fredag.
+**"Send digest nå"** der for å teste utenom fredag.
 
 ## Fase 2 (ikke bygget ennå)
 

@@ -1,15 +1,17 @@
-name: Doffin daily scan
+name: Doffin weekly scan
 
 on:
   schedule:
-    # 15:00 Europe/Oslo. Oslo er UTC+1 (vinter) / UTC+2 (sommer) — 13:00 UTC gir 15:00
-    # sommertid (CEST) og 14:00 vintertid (CET). Juster til "0 14 * * *" når Norge
-    # går over til vintertid i slutten av oktober, om du vil ha eksakt klokketid.
-    - cron: "0 13 * * *"
+    # Fredag 15:00 Europe/Oslo. Oslo er UTC+1 (vinter) / UTC+2 (sommer) — 13:00 UTC
+    # gir 15:00 sommertid (CEST) og 14:00 vintertid (CET). Juster til "0 14 * * 5"
+    # når Norge går over til vintertid i slutten av oktober, om du vil ha eksakt
+    # klokketid. Ukedagen (5 = fredag) MÅ holdes i sync med WEEKLY_DIGEST_DAY-
+    # variabelen deliver.py leser (default 5) — se README.
+    - cron: "0 13 * * 5"
   workflow_dispatch:
     inputs:
       force_send:
-        description: "Send ukesdigest nå, uansett ukedag (for testing)"
+        description: "Send digest nå (for testing manuelle kjøringer utenom fredag)"
         type: boolean
         default: false
 
@@ -28,20 +30,20 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Fetch new Doffin notices
+      - name: Fetch new Doffin notices (siste 7 dager)
         env:
           DOFFIN_SUBSCRIPTION_KEY: ${{ secrets.DOFFIN_SUBSCRIPTION_KEY }}
-        run: python -m src.fetch_doffin --since-hours 24
+        run: python -m src.fetch_doffin --since-hours 168
 
-      - name: Fetch new TED notices (EU-wide, no key needed)
-        run: python -m src.fetch_ted --since-days 1
+      - name: Fetch new TED notices (siste 7 dager, EU-wide, no key needed)
+        run: python -m src.fetch_ted --since-days 7
 
       - name: Score notices
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m src.score_notices
 
-      - name: Deliver digest (accumulates daily, sends weekly)
+      - name: Deliver digest
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
